@@ -7,7 +7,8 @@ import openwifi.webpage as owweb
 import sys
 import time
 
-output.set_mode("VVDBG")
+output.set_mode("DBG")
+web.config.debug=True
 
 server = yapc.core()
 ofconn = ofcomm.ofserver(server)
