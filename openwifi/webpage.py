@@ -53,9 +53,6 @@ class index:
     @author ykk
     @date Mar 2011
     """
-    def __init__(self):
-        output.dbg("Created", self.__class__.__name__)
-    
     def GET(self):
         """Response to get
         """
