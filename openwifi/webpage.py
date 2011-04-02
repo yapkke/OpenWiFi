@@ -65,11 +65,25 @@ class index:
         '''
         if oid:
             body += self.get_logout()
-            output.dbg(str(owglobal.session))
+            a = owevent.authenticated(owglobal.session.datapath,
+                                      owglobal.session.host,
+                                      oid)
+            owglobal.server.post_event(a)
+            output.dbg("%x is authenticated with %s" % 
+                       (owglobal.session.host, oid), 
+                       self.__class__.__name__)
         else:
-            owglobal.session.datapath = owglobal.last_host_redirect[0]
-            owglobal.session.host = owglobal.last_host_redirect[1]
+            if (owglobal.session.datapath == None):
+                owglobal.session.datapath = owglobal.last_host_redirect[0]
+                owglobal.session.host = owglobal.last_host_redirect[1]
             body += self.get_login()
+            u = owevent.unauthenticated(owglobal.session.datapath,
+                                        owglobal.session.host)
+            owglobal.server.post_event(u)
+            output.dbg("%x is unauthenticated" % 
+                       owglobal.session.host, 
+                       self.__class__.__name__)
+            
 
         body += '''
         <br>
