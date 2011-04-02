@@ -1,0 +1,2 @@
+global server
+server=None

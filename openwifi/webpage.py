@@ -1,5 +1,6 @@
 import web
 import web.webopenid
+import openwifi.globals as owglobal
 import yapc.interface as yapc
 import yapc.output as output
 
@@ -56,6 +57,7 @@ class index:
     def GET(self):
         """Response to get
         """
+        output.dbg(str(owglobal.server))
         oid = web.webopenid.status()
         body = '''
         <html><head><title>Open WiFi: Towards Access Everywhere...</title></head>
