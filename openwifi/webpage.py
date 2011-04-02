@@ -62,40 +62,10 @@ class index:
         <body>
         '''
 
-        if not oid:
-            body += '''
-            <table width=600 border=0><tr><td>
-OpenWiFi aims to facilitate widesread availability of free and open wireless access.  If you have arrived here while logging into a wireless network, you can use this network by simply logging in using your <a target=_new_ href="http://openid.net/">OpenID</a> here.  This access is provided as part of a research experiment.  By using this network, you agree for your session information to be used for research purposes.  The researchers involved would act in good faith to protect your identity using publishing results of this experiment.  You will, of course, also responsible for any of your actions while using this network.
-            <br><br></td></tr>
-            '''
-
         if oid:
-            body += '''<tr><td>
-            You are logged in as<br>
-            %s
-           </td></tr>
-            <tr><td>  
-             ''' % (form('/openid'))
+            body += self.get_logout()
         else:
-            body += '''<tr><td>
-            If you agree to the above terms and condition, 
-            you can login with your OpenID here:<br>
-            %s
-           </td></tr>
-            <tr><td>
-             e.g., for user <i>IUseOpenWiFi</i>,<br>
-        
-             ''' % (form('/openid'))
-
-        if not oid:
-            body += '''
-            Google OpenID url is 
-            <b>http://www.google.com/profiles/<i>IUseOpenWiFi</i></b><br>
-            '''
-            body += '''
-            Yahoo OpenID url is 
-            <b>https://me.yahoo.com/<i>IUseOpenWiFi</i></b><br>
-            '''
+            body += self.get_login()
 
         body += '''
         <br>
@@ -110,4 +80,51 @@ OpenWiFi aims to facilitate widesread availability of free and open wireless acc
         </html>
         '''
         
+        return body
+
+    def get_login(self):
+        """Get page to login
+        """
+        body = ""
+
+        body += '''
+        <table width=600 border=0><tr><td>
+OpenWiFi aims to facilitate widesread availability of free and open wireless access.  If you have arrived here while logging into a wireless network, you can use this network by simply logging in using your <a target=_new_ href="http://openid.net/">OpenID</a> here.  This access is provided as part of a research experiment.  By using this network, you agree for your session information to be used for research purposes.  The researchers involved would act in good faith to protect your identity when publishing results.  You will, of course, also responsible for any of your actions while using this network.
+        <br><br></td></tr>
+        '''
+
+        body += '''<tr><td>
+        If you agree to the above terms and condition, 
+        you can login with your OpenID here:<br>
+        %s
+        </td></tr>
+        <tr><td>
+        e.g., for user <i>IUseOpenWiFi</i>,<br>
+        
+        ''' % (form('/openid'))
+
+        body += '''
+        Google OpenID url is 
+        <b>http://www.google.com/profiles/<i>IUseOpenWiFi</i></b><br>
+        '''
+
+        body += '''
+        Yahoo OpenID url is 
+        <b>https://me.yahoo.com/<i>IUseOpenWiFi</i></b><br>
+        '''
+
+        return body
+
+    def get_logout(self):
+        """Get page to logout
+        """
+        body = ""
+
+        body += '''<tr><td>
+        You are logged in as<br>
+        %s
+        </td></tr>
+        <tr><td>  
+        ''' % (form('/openid'))
+
         return body
