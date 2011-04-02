@@ -16,6 +16,11 @@ owglobal.server = server
 ofconn = ofcomm.ofserver(server)
 webapp = web.application(owweb.urls, globals())
 webcleanup = owweb.cleanup(server)
+session = web.session.Session(webapp, 
+                              web.session.DiskStore('sessions'), 
+                              initializer={'datapath': None, 
+                                           'host': None})
+owglobal.session = session
 
 if __name__ == "__main__": 
     server.run(runbg=True)

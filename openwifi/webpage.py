@@ -1,6 +1,7 @@
 import web
 import web.webopenid
 import openwifi.globals as owglobal
+import openwifi.event as owevent
 import yapc.interface as yapc
 import yapc.output as output
 
@@ -57,16 +58,17 @@ class index:
     def GET(self):
         """Response to get
         """
-        output.dbg(str(owglobal.server))
         oid = web.webopenid.status()
         body = '''
         <html><head><title>Open WiFi: Towards Access Everywhere...</title></head>
         <body>
         '''
-
         if oid:
             body += self.get_logout()
+            output.dbg(str(owglobal.session))
         else:
+            owglobal.session.datapath = owglobal.last_host_redirect[0]
+            owglobal.session.host = owglobal.last_host_redirect[1]
             body += self.get_login()
 
         body += '''
