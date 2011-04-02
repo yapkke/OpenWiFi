@@ -4,7 +4,7 @@ import yapc.interface as yapc
 import yapc.output as output
 
 urls = (
-    r'/openid', 'openwifi.webpage.unsuccessful',
+    r'/openid', 'web.webopenid.host',
     r'/', 'openwifi.webpage.index'
     )
 
@@ -47,32 +47,15 @@ def form(openid_loc):
         <button type="submit">log in</button>
         </form>''' % (openid_loc, web.ctx.fullpath)
 
-
-class unsuccessful:
-    """Unsuccesful page
-
-    @author ykk
-    @date Apr 2011
-    """
-    def POST(self):
-        """ return unsuccessful page
-        """
-        oid = web.webopenid.status()
-        return '''
-        <html><head><title>Open WiFi: Towards Access Everywhere...</title></head>
-        <body>
-        <h2>Failure to parse OpenID provided!!!</h2>
-        Try again <a href="/">here</a>.
-        </body>
-        </html>
-        '''
-
 class index:
     """Index page
     
     @author ykk
     @date Mar 2011
     """
+    def __init__(self):
+        output.dbg("Created", self.__class__.__name__)
+    
     def GET(self):
         """Response to get
         """
