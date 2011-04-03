@@ -1,6 +1,5 @@
 import yapc.interface as yapc
 
-
 class unauthenticated(yapc.event):
     """Event thrown when host is unauthenticated
    
