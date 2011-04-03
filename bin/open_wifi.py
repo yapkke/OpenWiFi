@@ -23,6 +23,7 @@ owglobal.server = server
 ofconn = ofcomm.ofserver(server)
 ofparse = ofevents.parser(server)
 swhost = switchhost.mac2sw_binding(server)
+owredirect = owauth.redirect(server, ofconn.connections)
 fsw = fswitch.learningswitch(server, ofconn.connections)
 fp = default.floodpkt(server, ofconn.connections)
 

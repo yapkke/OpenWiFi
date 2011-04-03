@@ -1,5 +1,6 @@
 import yapc.interface as yapc
 import yapc.output as output
+import yapc.events.openflow as ofevents
 import yapc.util.memcacheutil as mcutil
 import openwifi.event as owevent
 
@@ -44,4 +45,38 @@ class host_auth(yapc.component):
                        self.__class__.__name__)
             mcutil.set(self.get_key(event.host), None)
             
+        return True
+
+class redirect(yapc.component):
+    """Class to redirect unauthenticate host for authentication
+    
+    @author ykk
+    @date Apr 2011
+    """
+    def __init__(self, server, conn):
+        """Initialize
+        """
+        server.register_event_handler(ofevents.pktin.name, self)
+        self.conn = conn
+
+    def processevent(self, event):
+        """Process event
+        """
+        if (isinstance(event, ofevents.pktin)):
+            ##Allow 
+            # (1) authenticated host
+            # (2) ARP
+            # (3) DHCP
+            if (host_authenticated(event.match.dl_src) or 
+                (event.match.dl_type == 0x0806) or 
+                (event.match.dl_type == 0x0800 and 
+                 event.match.nw_proto == 17 and
+                 (event.match.tp_dst == 67 or 
+                  event.match.tp_dst == 68))
+                ):
+                return True
+ 
+            ##Redirect unauthenticated host if HTTP
+            return False
+
         return True
