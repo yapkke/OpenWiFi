@@ -1,7 +1,9 @@
+import dpkt
 import yapc.interface as yapc
 import yapc.output as output
 import yapc.events.openflow as ofevents
 import yapc.util.memcacheutil as mcutil
+import yapc.forwarding.flows as flows
 import openwifi.event as owevent
 
 def host_authenticated(host):
@@ -68,15 +70,24 @@ class redirect(yapc.component):
             # (2) ARP
             # (3) DHCP
             if (host_authenticated(event.match.dl_src) or 
-                (event.match.dl_type == 0x0806) or 
-                (event.match.dl_type == 0x0800 and 
-                 event.match.nw_proto == 17 and
+                (event.match.dl_type == dpkt.ethernet.ETH_TYPE_ARP) or 
+                (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and 
+                 event.match.nw_proto == dpkt.ip.IP_PROTO_UDP and
                  (event.match.tp_dst == 67 or 
                   event.match.tp_dst == 68))
                 ):
                 return True
  
             ##Redirect unauthenticated host if HTTP
+            if (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and 
+                event.match.nw_proto == dpkt.ip.IP_PROTO_TCP and
+                event.match.tp_dst == 80):
+                pass
+                ##Rewrite ip address to openflow2.stanford.edu
+                ##We need the whole packet then
+            
             return False
 
         return True
+
+        
