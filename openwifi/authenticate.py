@@ -5,6 +5,11 @@ import yapc.events.openflow as ofevents
 import yapc.util.memcacheutil as mcutil
 import yapc.forwarding.flows as flows
 import openwifi.event as owevent
+import openwifi.globals as owglobal
+
+AUTH_DST_IP = 0xab434aef
+AUTH_DST_PORT = 8080
+AUTH_DST = "openflow2.stanford.edu"
 
 def host_authenticated(host):
     """Return if host is authenticated
@@ -69,22 +74,30 @@ class redirect(yapc.component):
             # (1) authenticated host
             # (2) ARP
             # (3) DHCP
+            # (4) DNS
             if (host_authenticated(event.match.dl_src) or 
                 (event.match.dl_type == dpkt.ethernet.ETH_TYPE_ARP) or 
                 (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and 
                  event.match.nw_proto == dpkt.ip.IP_PROTO_UDP and
                  (event.match.tp_dst == 67 or 
-                  event.match.tp_dst == 68))
+                  event.match.tp_dst == 68)) or
+                (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and 
+                 event.match.nw_proto == dpkt.ip.IP_PROTO_UDP and
+                 event.match.tp_dst == 53)
                 ):
                 return True
- 
+
             ##Redirect unauthenticated host if HTTP
             if (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and 
                 event.match.nw_proto == dpkt.ip.IP_PROTO_TCP and
                 event.match.tp_dst == 80):
-                pass
-                ##Rewrite ip address to openflow2.stanford.edu
-                ##We need the whole packet then
+                if (event.match.nw_dst == AUTH_DST_IP and
+                    event.match.tp_dst == AUTH_PORT):
+                    return True
+                else:
+                    owglobal.last_host_redirect = (self.conn.db[event.sock].dpid,
+                                                   event.match.dl_src)
+                    ##Rewrite ip address to openflow2.stanford.edu
             
             return False
 
