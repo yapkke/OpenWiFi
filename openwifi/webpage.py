@@ -69,8 +69,8 @@ class index:
                                       owglobal.session.host,
                                       oid)
             owglobal.server.post_event(a)
-            output.dbg("%x is authenticated with %s" % 
-                       (owglobal.session.host, oid), 
+            output.dbg(str(owglobal.session.host)+\
+                           " is authenticated with %s" % oid, 
                        self.__class__.__name__)
         else:
             if (owglobal.session.datapath == None):
