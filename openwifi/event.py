@@ -6,6 +6,7 @@ class going_to_auth(yapc.event):
     @author ykk
     @date Apr 2011
     """
+    name = "Host Going to Authenticate"
     def __init__(self, datapathid, host, url):
         """Initialize
         """
