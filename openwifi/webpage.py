@@ -38,7 +38,13 @@ class host(web.webopenid.host):
             return web.redirect(i.return_to)
 
         i = web.input('openid', return_to='/')
-        output.dbg(str(i['openid']))
+        going = owevent.going_to_auth(owglobal.session.datapath,
+                                      owglobal.session.host,
+                                      i['openid'])
+        owglobal.server.post_event(going)
+        output.dbg(str(owglobal.session.host)+\
+                       " is going to "+going.server()+" to authenticate",
+                   self.__class__.__name__)
 
         n = web.webopenid._random_session()
         web.webopenid.sessions[n] = {'webpy_return_to': i.return_to}
