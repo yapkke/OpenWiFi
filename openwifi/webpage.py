@@ -1,12 +1,13 @@
 import web
 import web.webopenid
+import openid.consumer.consumer
 import openwifi.globals as owglobal
 import openwifi.event as owevent
 import yapc.interface as yapc
 import yapc.output as output
 
 urls = (
-    r'/openid', 'web.webopenid.host',
+    r'/openid', 'openwifi.webpage.host',
     r'/', 'openwifi.webpage.index'
     )
 
@@ -26,6 +27,29 @@ class cleanup(yapc.cleanup):
         """
         output.dbg("Cleanup webpy", self.__class__.__name__)
         raise KeyboardInterrupt
+
+class host(web.webopenid.host):
+    def POST(self):
+        # unlike the usual scheme of things, the POST is actually called
+        # first here
+        i = web.input(return_to='/')
+        if i.get('action') == 'logout':
+            web.webopenid.logout()
+            return web.redirect(i.return_to)
+
+        i = web.input('openid', return_to='/')
+        output.dbg(str(i['openid']))
+
+        n = web.webopenid._random_session()
+        web.webopenid.sessions[n] = {'webpy_return_to': i.return_to}
+        
+        c = openid.consumer.consumer.Consumer(web.webopenid.sessions[n], 
+                                              web.webopenid.store)
+        a = c.begin(i.openid)
+        f = a.redirectURL(web.ctx.home, web.ctx.home + web.ctx.fullpath)
+
+        web.setcookie('openid_session_id', n)
+        return web.redirect(f)
 
 def form(openid_loc):
     oid = web.webopenid.status()
