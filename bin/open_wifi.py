@@ -36,8 +36,8 @@ webapp = web.application(owweb.urls, globals())
 webcleanup = owweb.cleanup(server)
 session = web.session.Session(webapp, 
                               web.session.DiskStore('sessions'), 
-                              initializer={'datapath': 0xdeadbeefdeadbeef, 
-                                           'host': [0,0,0,0,0,0]})
+                              initializer={'datapath': None, 
+                                           'host': None})
 owglobal.session = session
 hauth = owauth.host_auth(server)
 

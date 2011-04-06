@@ -103,16 +103,14 @@ class index:
                            " is authenticated with %s" % oid, 
                        self.__class__.__name__)
         else:
-            if (owglobal.session.datapath == None):
+            if (owglobal.session.datapath == None or
+                (not isinstance(owglobal.session.datapath, list))):
                 owglobal.session.datapath = owglobal.last_host_redirect[0]
                 owglobal.session.host = owglobal.last_host_redirect[1]
             body += self.get_login()
             u = owevent.unauthenticated(owglobal.session.datapath,
                                         owglobal.session.host)
-            owglobal.server.post_event(u)
-            output.dbg(str(owglobal.session.host)+"is unauthenticated",
-                       self.__class__.__name__)
-            
+            owglobal.server.post_event(u)            
 
         body += '''
         <br>

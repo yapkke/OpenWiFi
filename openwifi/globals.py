@@ -8,5 +8,5 @@ session = None
 
 #Reference to last host redirected for authentication
 global last_host_redirect
-last_host_redirect = (0x11223355667788, 0xcafecafe)
+last_host_redirect = (0x11223355667788, [0,0,0,0,0,0])
 
