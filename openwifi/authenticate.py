@@ -1,13 +1,15 @@
 import dpkt
+import socket
 import yapc.interface as yapc
 import yapc.output as output
 import yapc.events.openflow as ofevents
 import yapc.util.memcacheutil as mcutil
+import yapc.util.parse as pu
 import yapc.forwarding.flows as flows
 import openwifi.event as owevent
 import openwifi.globals as owglobal
 
-AUTH_DST_IP = 0xab434aef
+AUTH_DST_IP = socket.inet_aton("171.67.74.239")
 AUTH_DST_PORT = 8080
 AUTH_DST = "openflow2.stanford.edu"
 AUTH_TIMEOUT = 30
@@ -48,28 +50,28 @@ class host_auth(yapc.component):
     def get_key(host):
         """Get host authentication key
         """
-        return "%x_authenticated" % host
+        return pu.array2hex_str(host)+"_authenticated"
     get_key = yapc.static_callable(get_key)
 
     def get_auth_key(host):
         """Get server for host authentication key
         """
-        return "%x_authenticated" % host
+        return pu.array2hex_str(host)+"_auth_server"
     get_auth_key = yapc.static_callable(get_auth_key)
 
     def processevent(self, event):
         """Process authentication event
         """
         if (isinstance(event, owevent.authenticated)):
-            output.dbg("%x is authenticated" % event.host,
+            output.dbg(pu.array2hex_str(event.host)+" is authenticated",
                        self.__class__.__name__)
             mcutil.set(host_auth.get_key(event.host), event.openid)
         elif (isinstance(event, owevent.unauthenticated)):
-            output.dbg("%x is unauthenticated" % event.host,
+            output.dbg(pu.array2hex_str(event.host)+" is unauthenticated",
                        self.__class__.__name__)
             mcutil.set(host_auth.get_key(event.host), None)
         elif (isinstance(event, owevent.going_to_auth)):
-            output.dbg("%x is going to authenticate" % event.host,
+            output.dbg(pu.array2hex_str(event.host)+" is going to authenticate",
                        self.__class__.__name__)
             mcutil.set(host_auth.get_auth_key(event.host), event.server(),
                        AUTH_TIMEOUT)
@@ -105,12 +107,19 @@ class redirect(yapc.component):
                   event.match.tp_dst == 68)) or
                 (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and 
                  event.match.nw_proto == dpkt.ip.IP_PROTO_UDP and
-                 event.match.tp_dst == 53)
-                ):
+                 (event.match.tp_dst == 53 or event.match.tp_src == 53))):
                 return True
 
+            output.dbg(pu.get_ip_string(event.match.nw_src) + ":"+str(event.match.tp_src)+\
+                           "=>"+pu.get_ip_string(event.match.nw_dst) + ":"+str(event.match.tp_dst),
+                       self.__class__.__name__)
+
             ##Allow flow to authenticate even when yet authenticated
-            
+            if ((pu.get_packed_ip(event.match.nw_dst) == AUTH_DST_IP and
+                 event.match.tp_dst == AUTH_DST_PORT) or
+                (pu.get_packed_ip(event.match.nw_src) == AUTH_DST_IP and
+                 event.match.tp_src == AUTH_DST_PORT)):
+                return True
 
             ##Redirect unauthenticated host if HTTP
             if (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and 
