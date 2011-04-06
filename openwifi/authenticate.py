@@ -10,8 +10,8 @@ import openwifi.event as owevent
 import openwifi.globals as owglobal
 
 AUTH_DST_IP = socket.inet_aton("171.67.74.239")
-AUTH_DST_PORT = 8080
-AUTH_DST = "openflow2.stanford.edu"
+AUTH_DST_PORT1 = 80
+AUTH_DST_PORT2 = 8080
 AUTH_TIMEOUT = 30
 
 def host_auth_server(host):
@@ -114,12 +114,16 @@ class redirect(yapc.component):
                            "=>"+pu.get_ip_string(event.match.nw_dst) + ":"+str(event.match.tp_dst),
                        self.__class__.__name__)
 
+
             ##Allow flow to authenticate even when yet authenticated
             if ((pu.get_packed_ip(event.match.nw_dst) == AUTH_DST_IP and
-                 event.match.tp_dst == AUTH_DST_PORT) or
+                 (event.match.tp_dst == AUTH_DST_PORT1 or event.match.tp_dst == AUTH_DST_PORT2)) or
                 (pu.get_packed_ip(event.match.nw_src) == AUTH_DST_IP and
-                 event.match.tp_src == AUTH_DST_PORT)):
+                 (event.match.tp_src == AUTH_DST_PORT1 or event.match.tp_src == AUTH_DST_PORT2))):
+                owglobal.last_host_redirect = (self.conn.db[event.sock].dpid,
+                                               event.match.dl_src)
                 return True
+
 
             ##Redirect unauthenticated host if HTTP
             if (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and 
@@ -129,8 +133,7 @@ class redirect(yapc.component):
                     event.match.tp_dst == AUTH_PORT):
                     return True
                 else:
-                    owglobal.last_host_redirect = (self.conn.db[event.sock].dpid,
-                                                   event.match.dl_src)
+                    pass
                     ##Rewrite ip address to openflow2.stanford.edu
             
             return False
