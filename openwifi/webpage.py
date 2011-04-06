@@ -110,8 +110,7 @@ class index:
             u = owevent.unauthenticated(owglobal.session.datapath,
                                         owglobal.session.host)
             owglobal.server.post_event(u)
-            output.dbg("%x is unauthenticated" % 
-                       owglobal.session.host, 
+            output.dbg(str(owglobal.session.host)+"is unauthenticated",
                        self.__class__.__name__)
             
 
@@ -120,7 +119,7 @@ class index:
         </td></tr>
         <tr><td>
         Empowered by 
-        <img height=24px src="http://www.openflow.org/img/newlogo5.png">
+        <img height=24px src="http://openflow2.stanford.edu/newlogo5.png">
         </td></tr>
     
         </table>
