@@ -1,4 +1,5 @@
 import yapc.interface as yapc
+import yapc.output as output
 
 class going_to_auth(yapc.event):
     """Event thrown when host is going to url to authenticate
