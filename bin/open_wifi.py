@@ -6,7 +6,6 @@ import yapc.comm.openflow as ofcomm
 import yapc.events.openflow as ofevents
 import yapc.netstate.swhost as switchhost
 import yapc.netstate.switches as swstate
-import yapc.netstate.host as hoststate
 import yapc.forwarding.switching as fswitch
 import yapc.forwarding.default as default
 import yapc.util.memcacheutil as mcutil
@@ -26,7 +25,6 @@ ofconn = ofcomm.ofserver(server)
 ofparse = ofevents.parser(server)
 swconfig = swstate.dp_config(server, ofconn.connections)
 swconfig.default_miss_send_len = 65535
-host = hoststate.host_dns(server)
 swhost = switchhost.mac2sw_binding(server)
 owredirect = owauth.redirect(server, ofconn.connections)
 fsw = fswitch.learningswitch(server, ofconn.connections)

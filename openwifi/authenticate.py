@@ -13,7 +13,8 @@ import openwifi.globals as owglobal
 AUTH_DST_IP = pu.ip_string2val("171.67.74.239")
 AUTH_DST_PORT1 = 80
 AUTH_DST_PORT2 = 8080
-AUTH_TIMEOUT = 30
+AUTH_TIMEOUT = 60
+HTTPS_PORT = 443
 
 def host_auth_server(host):
     """Return server host is going to authenticate with
@@ -96,14 +97,23 @@ class redirect(yapc.component):
         """
         if (isinstance(event, ofevents.pktin)):
             #Authenticated host
-            if (host_authenticated(event.match.dl_src)):
+            if (host_authenticated(event.match.dl_src) or 
+                host_authenticated(event.match.dl_dst)):
+                output.vdbg("Authenticated host flow "+\
+                                pu.ip_val2string(event.match.nw_src) + ":"+str(event.match.tp_src)+\
+                                "=>"+\
+                                pu.ip_val2string(event.match.nw_dst) + ":"+str(event.match.tp_dst),
+                            self.__class__.__name__)
                 return True
 
             ##Allow 
             # (1) ARP
-            # (2) DHCP
-            # (3) DNS
+            # (2) ICMP
+            # (3) DHCP
+            # (4) DNS
             if ((event.match.dl_type == dpkt.ethernet.ETH_TYPE_ARP) or 
+                (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and
+                 event.match.nw_proto == dpkt.ip.IP_PROTO_ICMP) or 
                 (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and 
                  event.match.nw_proto == dpkt.ip.IP_PROTO_UDP and
                  (event.match.tp_dst == 67 or 
@@ -118,8 +128,9 @@ class redirect(yapc.component):
                  (event.match.tp_dst == AUTH_DST_PORT1 or event.match.tp_dst == AUTH_DST_PORT2)) or
                 (event.match.nw_src == AUTH_DST_IP and
                  (event.match.tp_src == AUTH_DST_PORT1 or event.match.tp_src == AUTH_DST_PORT2))):
-                owglobal.last_host_redirect = (self.conn.db[event.sock].dpid,
-                                               event.match.dl_src)
+                if (event.match.nw_dst == AUTH_DST_IP and event.match.tp_dst == 8080):
+                    owglobal.last_host_redirect = (self.conn.db[event.sock].dpid,
+                                                   event.match.dl_src)
                 output.dbg("Approving "+\
                                pu.ip_val2string(event.match.nw_src) + ":"+str(event.match.tp_src)+\
                                "=>"+\
@@ -127,12 +138,33 @@ class redirect(yapc.component):
                            self.__class__.__name__)
                 return True
 
+            ##Allow route to OpenID provider (should be in HTTPS)
+            if (event.match.tp_dst == HTTPS_PORT or 
+                event.match.tp_dst == 8080 or 
+                event.match.tp_dst == 80 or
+                event.match.tp_src == HTTPS_PORT or 
+                event.match.tp_src == 8080 or 
+                event.match.tp_src == 80):
+                auth_s = None
+                if (event.match.tp_dst == HTTPS_PORT or 
+                    event.match.tp_dst == 8080 or 
+                    event.match.tp_dst == 80):
+                    auth_s = mcutil.get(host_auth.get_auth_key(event.match.dl_src))
+                else:
+                    auth_s = mcutil.get(host_auth.get_auth_key(event.match.dl_dst))
+
+                if (auth_s != None):
+                    output.dbg(pu.ip_val2string(event.match.nw_dst)+" associated with "+\
+                                   " auth server "+str(auth_s)+" "+str(event.match.dl_src),
+                               self.__class__.__name__)
+                    return True
+                
             ##Redirect unauthenticated host if HTTP
             if (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and 
                 event.match.nw_proto == dpkt.ip.IP_PROTO_TCP and
-                event.match.tp_dst == 80):
-                output.dbg("Redirecting %x to authenticate" % pu.array2val(event.match.dl_src),
-                           self.__class__.__name__)
+                (event.match.tp_dst == 80 or event.match.tp_dst == 8080)):
+                #output.dbg("Redirecting %x to authenticate" % pu.array2val(event.match.dl_src),
+                #           self.__class__.__name__)
 
                 #Forward flow
                 flow = flows.exact_entry(event.match)
@@ -152,12 +184,15 @@ class redirect(yapc.component):
                 self.conn.db[event.sock].send(rflow.get_flow_mod(pyof.OFPFC_ADD).pack())
                 
                 return False
-
-            output.dbg(pu.ip_val2string(event.match.nw_src) + ":"+str(event.match.tp_src)+\
+           
+            #Drop remaining flows
+            flow = flows.exact_entry(event.match)
+            flow.set_buffer(event.pktin.buffer_id)
+            self.conn.db[event.sock].send(flow.get_flow_mod(pyof.OFPFC_ADD).pack())
+            output.dbg("Dropping "+\
+                           pu.ip_val2string(event.match.nw_src) + ":"+str(event.match.tp_src)+\
                            "=>"+pu.ip_val2string(event.match.nw_dst) + ":"+str(event.match.tp_dst),
                        self.__class__.__name__)
-                
-            
             return False
 
         return True
