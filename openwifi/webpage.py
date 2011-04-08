@@ -150,12 +150,12 @@ OpenWiFi aims to facilitate widesread availability of free and open wireless acc
 
         body += '''
         Google OpenID url is 
-        <b>http://www.google.com/profiles/<i>IUseOpenWiFi</i></b><br>
+        <b><a href="http://google.com">http://www.google.com/</a>profiles/<i>IUseOpenWiFi</i></b><br>
         '''
 
         body += '''
         Yahoo OpenID url is 
-        <b>https://me.yahoo.com/<i>IUseOpenWiFi</i></b><br>
+        <b><a href="http://www.yahoo.com">https://me.yahoo.com/</a><i>IUseOpenWiFi</i></b><br>
         '''
 
         return body
