@@ -72,6 +72,7 @@ class host_auth(yapc.component):
             output.dbg(pu.array2hex_str(event.host)+" is unauthenticated",
                        self.__class__.__name__)
             mcutil.set(host_auth.get_key(event.host), None)
+            mcutil.delete(host_auth.get_auth_key(event.host))
         elif (isinstance(event, owevent.going_to_auth)):
             output.dbg(pu.array2hex_str(event.host)+" is going to authenticate",
                        self.__class__.__name__)
@@ -96,6 +97,21 @@ class redirect(yapc.component):
         """Process event
         """
         if (isinstance(event, ofevents.pktin)):
+            ##Allow flow to authenticate even when yet authenticated
+            if ((event.match.nw_dst == AUTH_DST_IP and
+                 (event.match.tp_dst == AUTH_DST_PORT1 or event.match.tp_dst == AUTH_DST_PORT2)) or
+                (event.match.nw_src == AUTH_DST_IP and
+                 (event.match.tp_src == AUTH_DST_PORT1 or event.match.tp_src == AUTH_DST_PORT2))):
+                if (event.match.nw_dst == AUTH_DST_IP and event.match.tp_dst == 8080):
+                    owglobal.last_host_redirect = (self.conn.db[event.sock].dpid,
+                                                   event.match.dl_src)
+                output.dbg("Approving "+\
+                               pu.ip_val2string(event.match.nw_src) + ":"+str(event.match.tp_src)+\
+                               "=>"+\
+                               pu.ip_val2string(event.match.nw_dst) + ":"+str(event.match.tp_dst),
+                           self.__class__.__name__)
+                return True
+
             #Authenticated host
             if (host_authenticated(event.match.dl_src) or 
                 host_authenticated(event.match.dl_dst)):
@@ -123,21 +139,6 @@ class redirect(yapc.component):
                  (event.match.tp_dst == 53 or event.match.tp_src == 53))):
                 return True
 
-            ##Allow flow to authenticate even when yet authenticated
-            if ((event.match.nw_dst == AUTH_DST_IP and
-                 (event.match.tp_dst == AUTH_DST_PORT1 or event.match.tp_dst == AUTH_DST_PORT2)) or
-                (event.match.nw_src == AUTH_DST_IP and
-                 (event.match.tp_src == AUTH_DST_PORT1 or event.match.tp_src == AUTH_DST_PORT2))):
-                if (event.match.nw_dst == AUTH_DST_IP and event.match.tp_dst == 8080):
-                    owglobal.last_host_redirect = (self.conn.db[event.sock].dpid,
-                                                   event.match.dl_src)
-                output.dbg("Approving "+\
-                               pu.ip_val2string(event.match.nw_src) + ":"+str(event.match.tp_src)+\
-                               "=>"+\
-                               pu.ip_val2string(event.match.nw_dst) + ":"+str(event.match.tp_dst),
-                           self.__class__.__name__)
-                return True
-
             ##Allow route to OpenID provider (should be in HTTPS)
             if (event.match.tp_dst == HTTPS_PORT or 
                 event.match.tp_dst == 8080 or 
@@ -163,25 +164,26 @@ class redirect(yapc.component):
             if (event.match.dl_type == dpkt.ethernet.ETH_TYPE_IP and 
                 event.match.nw_proto == dpkt.ip.IP_PROTO_TCP and
                 (event.match.tp_dst == 80 or event.match.tp_dst == 8080)):
-                #output.dbg("Redirecting %x to authenticate" % pu.array2val(event.match.dl_src),
-                #           self.__class__.__name__)
+                output.dbg("Redirecting %x to authenticate" % pu.array2val(event.match.dl_src),
+                           self.__class__.__name__)
 
                 #Forward flow
                 flow = flows.exact_entry(event.match)
                 key = swhost.mac2sw_binding.get_key(event.sock,
                                                     event.match.dl_dst)
                 port = mcutil.get(key)
-                flow.set_buffer(event.pktin.buffer_id)
-                flow.add_nw_rewrite(False, AUTH_DST_IP)
-                flow.add_output(port)
-                self.conn.db[event.sock].send(flow.get_flow_mod(pyof.OFPFC_ADD).pack())
+                if (port != None):
+                    flow.set_buffer(event.pktin.buffer_id)
+                    flow.add_nw_rewrite(False, AUTH_DST_IP)
+                    flow.add_output(port)
+                    self.conn.db[event.sock].send(flow.get_flow_mod(pyof.OFPFC_ADD).pack())
 
-                #Reverse flow
-                rflow = flow.reverse(port)
-                rflow.match.nw_src = AUTH_DST_IP
-                rflow.add_nw_rewrite(True, event.match.nw_dst)
-                rflow.add_output(event.pktin.in_port)
-                self.conn.db[event.sock].send(rflow.get_flow_mod(pyof.OFPFC_ADD).pack())
+                    #Reverse flow
+                    rflow = flow.reverse(port)
+                    rflow.match.nw_src = AUTH_DST_IP
+                    rflow.add_nw_rewrite(True, event.match.nw_dst)
+                    rflow.add_output(event.pktin.in_port)
+                    self.conn.db[event.sock].send(rflow.get_flow_mod(pyof.OFPFC_ADD).pack())
                 
                 return False
            
