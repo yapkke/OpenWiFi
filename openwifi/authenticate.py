@@ -13,7 +13,7 @@ import openwifi.globals as owglobal
 AUTH_DST_IP = pu.ip_string2val("171.67.74.239")
 AUTH_DST_PORT1 = 80
 AUTH_DST_PORT2 = 8080
-AUTH_TIMEOUT = 60
+AUTH_TIMEOUT = 120
 HTTPS_PORT = 443
 
 def host_auth_server(host):
