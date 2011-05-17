@@ -4,7 +4,7 @@ import openid.consumer.consumer
 import openwifi.globals as owglobal
 import openwifi.event as owevent
 import yapc.interface as yapc
-import yapc.output as output
+import yapc.log.output as output
 
 urls = (
     r'/openid', 'openwifi.webpage.host',

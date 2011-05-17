@@ -1,6 +1,6 @@
 import dpkt
 import yapc.interface as yapc
-import yapc.output as output
+import yapc.log.output as output
 import yapc.pyopenflow as pyof
 import yapc.events.openflow as ofevents
 import yapc.util.memcacheutil as mcutil

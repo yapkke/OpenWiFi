@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import web
 import yapc.core as yapc
-import yapc.output as output
+import yapc.log.output as output
 import yapc.comm.openflow as ofcomm
 import yapc.events.openflow as ofevents
 import yapc.netstate.swhost as switchhost
