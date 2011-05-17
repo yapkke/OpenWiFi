@@ -9,6 +9,8 @@ import yapc.netstate.switches as swstate
 import yapc.forwarding.switching as fswitch
 import yapc.forwarding.default as default
 import yapc.util.memcacheutil as mcutil
+import yapc.debug.openflow as ofdbg
+
 import openwifi.webpage as owweb
 import openwifi.globals as owglobal
 import openwifi.authenticate as owauth
@@ -27,8 +29,9 @@ swconfig = swstate.dp_config(server, ofconn.connections)
 swconfig.default_miss_send_len = 65535
 swhost = switchhost.mac2sw_binding(server)
 owredirect = owauth.redirect(server, ofconn.connections)
-fsw = fswitch.learningswitch(server, ofconn.connections)
+fsw = fswitch.learningswitch(server, ofconn.connections, True)
 fp = default.floodpkt(server, ofconn.connections)
+pfr = ofdbg.show_flow_removed(server)
 
 webapp = web.application(owweb.urls, globals())
 webcleanup = owweb.cleanup(server)
