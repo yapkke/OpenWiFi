@@ -64,6 +64,9 @@ class host_auth(yapc.component):
     def processevent(self, event):
         """Process authentication event
         """
+        if (event.host == None):
+            return True
+
         if (isinstance(event, owevent.authenticated)):
             output.dbg(pu.array2hex_str(event.host)+" is authenticated",
                        self.__class__.__name__)
@@ -176,6 +179,7 @@ class redirect(yapc.component):
                     flow.set_buffer(event.pktin.buffer_id)
                     flow.add_nw_rewrite(False, AUTH_DST_IP)
                     flow.add_output(port)
+                    flow.hard_timeout = 1
                     self.conn.db[event.sock].send(flow.get_flow_mod(pyof.OFPFC_ADD).pack())
 
                     #Reverse flow
@@ -183,6 +187,7 @@ class redirect(yapc.component):
                     rflow.match.nw_src = AUTH_DST_IP
                     rflow.add_nw_rewrite(True, event.match.nw_dst)
                     rflow.add_output(event.pktin.in_port)
+                    rflow.hard_timeout = 1
                     self.conn.db[event.sock].send(rflow.get_flow_mod(pyof.OFPFC_ADD).pack())
                 
                 return False
