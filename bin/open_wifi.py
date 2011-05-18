@@ -10,6 +10,8 @@ import yapc.forwarding.switching as fswitch
 import yapc.forwarding.default as default
 import yapc.util.memcacheutil as mcutil
 import yapc.debug.openflow as ofdbg
+import yapc.log.sqlite as sqlite
+import yapc.log.openflow as oflog
 
 import openwifi.webpage as owweb
 import openwifi.globals as owglobal
@@ -32,6 +34,9 @@ owredirect = owauth.redirect(server, ofconn.connections)
 fsw = fswitch.learningswitch(server, ofconn.connections, True)
 fp = default.floodpkt(server, ofconn.connections)
 pfr = ofdbg.show_flow_removed(server)
+db = sqlite.SqliteDB(server, "openwifi.sqlite")
+fl = oflog.flowlogger(server, db)
+db.start()
 
 webapp = web.application(owweb.urls, globals())
 webcleanup = owweb.cleanup(server)
