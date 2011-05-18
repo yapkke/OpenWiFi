@@ -179,21 +179,21 @@ class redirect(yapc.component):
                     flow.set_buffer(event.pktin.buffer_id)
                     flow.add_nw_rewrite(False, AUTH_DST_IP)
                     flow.add_output(port)
-                    self.conn.db[event.sock].send(flow.get_flow_mod(pyof.OFPFC_MODIFY).pack())
-
+                    self.conn.send(event.sock,flow.get_flow_mod(pyof.OFPFC_MODIFY).pack())
+                    
                     #Reverse flow
                     rflow = flow.reverse(port)
                     rflow.match.nw_src = AUTH_DST_IP
                     rflow.add_nw_rewrite(True, event.match.nw_dst)
                     rflow.add_output(event.pktin.in_port)
-                    self.conn.db[event.sock].send(rflow.get_flow_mod(pyof.OFPFC_MODIFY).pack())
+                    self.conn.send(event.sock,rflow.get_flow_mod(pyof.OFPFC_MODIFY).pack())
                 
                 return False
            
             #Drop remaining flows
             flow = flows.exact_entry(event.match)
             flow.set_buffer(event.pktin.buffer_id)
-            self.conn.db[event.sock].send(flow.get_flow_mod(pyof.OFPFC_ADD).pack())
+            self.conn.send(event.sock,flow.get_flow_mod(pyof.OFPFC_ADD).pack())
             output.dbg("Dropping "+\
                            pu.ip_val2string(event.match.nw_src) + ":"+str(event.match.tp_src)+\
                            "=>"+pu.ip_val2string(event.match.nw_dst) + ":"+str(event.match.tp_dst),
