@@ -134,13 +134,19 @@ class index:
 
         body += '''
         <table width=600 border=0><tr><td>
-OpenWiFi aims to facilitate widesread availability of free and open wireless access.  If you have arrived here while logging into a wireless network, you can use this network by simply logging in using your <a target=_new_ href="http://openid.net/">OpenID</a> here.  This access is provided as part of a research experiment.  By using this network, you agree for your session information to be used for research purposes.  The researchers involved would act in good faith to protect your identity when publishing results.  You will, of course, also responsible for any of your actions while using this network.
-        <br><br></td></tr>
+OpenWiFi is a research project that helps others provide free WiFi access. The researchers involved would act in good faith to protect your identity and privacy.
+</td></tr><tr><td>
+By using this network, you agree 
+<ul>
+<li>for your network information to be used for research purposes and the above terms conditions, and </li>
+<li>be responsible for any of your actions while using this network.</li>
+</ul>
+</td></tr><tr><td>
+If you have arrived here while logging into a wireless network, you can use this network by simply logging in using your OpenID here:
+</td></tr>
         '''
 
         body += '''<tr><td>
-        If you agree to the above terms and condition, 
-        you can login with your OpenID here:<br>
         %s
         </td></tr>
         <tr><td>
