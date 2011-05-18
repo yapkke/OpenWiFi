@@ -138,8 +138,8 @@ OpenWiFi is a research project that helps others provide free WiFi access. The r
 </td></tr><tr><td>
 By using this network, you agree 
 <ul>
-<li>for your network information to be used for research purposes and the above terms conditions, and </li>
-<li>be responsible for any of your actions while using this network.</li>
+<li>for your network information to be used for research purposes, and </li>
+<li>be responsible for your actions while using this network.</li>
 </ul>
 </td></tr><tr><td>
 If you have arrived here while logging into a wireless network, you can use this network by simply logging in using your OpenID here:
