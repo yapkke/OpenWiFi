@@ -16,6 +16,7 @@ import yapc.log.openflow as oflog
 import openwifi.webpage as owweb
 import openwifi.globals as owglobal
 import openwifi.authenticate as owauth
+import openwifi.logger as owlog
 import sys
 import time
 
@@ -36,6 +37,7 @@ fp = default.floodpkt(server, ofconn.connections)
 pfr = ofdbg.show_flow_removed(server)
 db = sqlite.SqliteDB(server, "openwifi.sqlite")
 fl = oflog.flowlogger(server, db)
+al = owlog.authlogger(server, db)
 db.start()
 
 webapp = web.application(owweb.urls, globals())
