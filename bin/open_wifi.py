@@ -25,6 +25,7 @@ mcutil.memcache_mode = mcutil.MEMCACHE_MODE["LOCAL"]
 web.config.debug=True
 
 server = yapc.core()
+webcleanup = owweb.cleanup(server)
 owglobal.server = server
 ofconn = ofcomm.ofserver(server)
 ofparse = ofevents.parser(server)
@@ -41,7 +42,6 @@ al = owlog.authlogger(server, db)
 db.start()
 
 webapp = web.application(owweb.urls, globals())
-webcleanup = owweb.cleanup(server)
 session = web.session.Session(webapp, 
                               web.session.DiskStore('sessions'), 
                               initializer={'datapath': None, 
