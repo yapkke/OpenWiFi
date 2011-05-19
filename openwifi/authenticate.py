@@ -15,6 +15,7 @@ AUTH_DST_PORT1 = 80
 AUTH_DST_PORT2 = 8080
 AUTH_TIMEOUT = 120
 HTTPS_PORT = 443
+BYPASS_IP = [pu.ip_string2val("140.211.166.152")]
 
 def host_auth_server(host):
     """Return server host is going to authenticate with
@@ -123,6 +124,13 @@ class redirect(yapc.component):
                                 "=>"+\
                                 pu.ip_val2string(event.match.nw_dst) + ":"+str(event.match.tp_dst),
                             self.__class__.__name__)
+                return True
+
+            ##Allow special website access without authentication
+            if (event.match.nw_dst in BYPASS_IP or
+                event.match.nw_src in BYPASS_IP):
+                output.dbg("Allow bypass for special server",
+                           self.__class__.__name__)
                 return True
 
             ##Allow 
