@@ -8,6 +8,7 @@ import yapc.log.output as output
 
 urls = (
     r'/openid', 'openwifi.webpage.host',
+    r'/learnmore', 'openwifi.webpage.learnmore',
     r'/', 'openwifi.webpage.index'
     )
 
@@ -27,6 +28,7 @@ class cleanup(yapc.cleanup):
         """
         output.dbg("Cleanup webpy", self.__class__.__name__)
         raise KeyboardInterrupt
+
 
 class host(web.webopenid.host):
     def POST(self):
@@ -79,6 +81,28 @@ def form(openid_loc):
         <button type="submit">log in</button>
         </form>''' % (openid_loc, web.ctx.fullpath)
 
+class learnmore:
+    """Learn more
+   
+    @author ykk
+    @date May 2011
+    """
+    def GET(self):
+        """Response to get
+        """
+        return '''
+<html><body>
+<h2>About OpenWiFi</h2>
+<p>OpenWiFi is <i>open</i> and <i>free</i>!</p>
+
+<p>Somebody---close to you---is kind enough to share his/her network connectivity and bandwidth.  The problem here is that he will become responsible for your actions using his network.  OpenWiFi is a project that helps these good Samaritans, i.e., to to protect them for being charged for malicious actions they didn't do (accesing illegal material, distrubuting IP-protected content, etc).  To do so, we associate your network traffic with some form of identity, e.g., OpenID.</p>
+
+<p>Since OpenWiFi is a research project, we maintain the right to keep logs for debugging and research.  The researchers involved would act in good faith to protect your identity and privacy.</p>
+
+<p><a href="/">Back to login</a></p>
+</body></html>
+        '''
+
 class index:
     """Index page
     
@@ -92,6 +116,7 @@ class index:
         body = '''
         <html><head><title>Open WiFi: Towards Access Everywhere...</title></head>
         <body>
+        <h2>Welcome to OpenWiFi!</h2>
         '''
         if oid:
             body += self.get_logout()
@@ -116,10 +141,13 @@ class index:
         <br>
         </td></tr>
         <tr><td>
+        Learn more about <a href="learnmore">OpenWiFi</a>.
+        </td></tr>
+        <tr><td>
         Empowered by 
         <img height=24px src="http://openflow2.stanford.edu:8080/static/newlogo5.png">
         </td></tr>
-    
+   
         </table>
         </body>
         </html>
@@ -134,15 +162,15 @@ class index:
 
         body += '''
         <table width=600 border=0><tr><td>
-OpenWiFi is a research project that helps others provide free WiFi access. The researchers involved would act in good faith to protect your identity and privacy.
+OpenWiFi is a research project that helps people provide free WiFi access.
 </td></tr><tr><td>
-By using this network, you agree 
+<b>By using this network, you agree the following terms and conditions</b>:
 <ul>
-<li>for your network information to be used for research purposes, and </li>
-<li>be responsible for your actions while using this network.</li>
+<li>information about your network traffic will be used for research purposes.</li>
+<li>you agree to be responsible for your actions while using this network.</li>
 </ul>
 </td></tr><tr><td>
-If you have arrived here while logging into a wireless network, you can use this network by simply logging in using your OpenID here:
+To access the Internet, you simple have to login using your <a target=_blank href="http://openid.net">OpenID</a> here:
 </td></tr>
         '''
 
