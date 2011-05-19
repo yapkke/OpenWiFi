@@ -28,22 +28,28 @@ class authlogger(sqlite.SqliteLogger, yapc.component):
         """Process event
         """
         if (isinstance(event, owevent.authenticated)):
+            h = None
+            if (event.host != None):
+                h = pu.array2hex_str(event.host)
             i = [time.time(),
                  "auth",
                  event.datapathid,
-                 pu.array2hex_str(event.host),
+                 h,
                  event.openid]
-            output.dbg("Authentication of "+pu.array2hex_str(event.host)+" recorded"+\
+            output.dbg("Authentication of "+str(h)+" recorded"+\
                            " with OpenID "+event.openid,
                        self.__class__.__name__)
             self.table.add_row(tuple(i))
         elif (isinstance(event, owevent.unauthenticated)):
+            h = None
+            if (event.host != None):
+                h = pu.array2hex_str(event.host)
             i = [time.time(),
                  "unauth",
                  event.datapathid,
-                 pu.array2hex_str(event.host),
+                 h,
                  None]
-            output.dbg("Unauthentication of "+pu.array2hex_str(event.host)+" recorded",
+            output.dbg("Unauthentication of "+str(h)+" recorded",
                        self.__class__.__name__)
             self.table.add_row(tuple(i))
                  
