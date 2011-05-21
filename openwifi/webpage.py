@@ -1,5 +1,6 @@
 import web
 import web.webopenid
+import web.template
 import openid.consumer.consumer
 import openwifi.globals as owglobal
 import openwifi.event as owevent
@@ -12,6 +13,8 @@ urls = (
     r'/tos', 'openwifi.webpage.tos',
     r'/', 'openwifi.webpage.index'
     )
+
+render = web.template.render('templates/')
 
 class cleanup(yapc.cleanup):
     """Component to terminate webpy
@@ -91,18 +94,7 @@ class tos:
     def GET(self):
         """Response to get
         """
-        return '''
-<html><body>
-<h2>Terms of Services</h2>
-<p>The goal of OpenWiFi is to allow people to provide WiFi access in a safe and accountable way.</p>
-<p>By using this network, you agree the following terms and conditions:
-<ul>
-<li>Information about your network traffic will be used for debugging and research purposes.</li>
-<li>You agree to be responsible for your actions while using this network.</li>
-</ul></p>
-<p><a href="/">Back to login</a></p>
-</body></html>
-        '''
+        return render.tos()
 
 class about:
     """About
@@ -113,18 +105,7 @@ class about:
     def GET(self):
         """Response to get
         """
-        return '''
-<html><body>
-<h2>About OpenWiFi</h2>
-<p>OpenWiFi is <i>open</i> and <i>free</i>!</p>
-
-<p>Somebody---close to you---is kind enough to share his/her network connectivity and bandwidth.  The problem here is that he will become responsible for your actions using his network.  OpenWiFi is a project that helps these good Samaritans, i.e., to to protect them for being charged for malicious actions they didn't do (accesing illegal material, distrubuting IP-protected content, etc).  To do so, we associate your network traffic with some form of identity, e.g., OpenID.</p>
-
-<p>Since OpenWiFi is a research project, we maintain the right to keep logs for debugging and research.  The researchers involved would act in good faith to protect your identity and privacy.  In return, you get Internet connectivity.</p>
-
-<p><a href="/">Back to login</a></p>
-</body></html>
-        '''
+        return render.about()
 
 class index:
     """Index page
