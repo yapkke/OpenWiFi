@@ -120,7 +120,8 @@ class index:
         body = '''
         <html><head><title>Open WiFi: Towards Access Everywhere...</title></head>
         <body>
-        <h2>Welcome to OpenWiFi!</h2>
+        <h2>Welcome to OpenWiFi<sup>&alpha</sup>!</h2>
+        <h4>A Stanford Research Project</h4>
         '''
         if oid:
             body += self.get_logout()

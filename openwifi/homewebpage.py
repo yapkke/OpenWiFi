@@ -59,7 +59,7 @@ def form(openid_loc):
         </form>''' % (openid_loc, oid, web.ctx.fullpath)
     else:
         return '''
-        <img height=20 src=http://openflow2.stanford.edu:8080/static/google.png />
+        Login using your <img height=20 src=http://openflow2.stanford.edu:8080/static/google.png />  account:
         <form method="post" action="%s">
         <input type="text" size=30 name="openid" 
          style="background: url(http://openflow2.stanford.edu:8080/static/login-bg.gif) no-repeat; 
