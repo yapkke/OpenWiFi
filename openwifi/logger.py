@@ -17,6 +17,7 @@ class authlogger(sqlite.SqliteLogger, yapc.component):
         sqlite.SqliteLogger.__init__(self, db, name)
         server.register_event_handler(owevent.authenticated.name, self)
         server.register_event_handler(owevent.unauthenticated.name, self)
+        server.register_event_handler(owevent.going_to_auth.name, self)
 
     def get_col_names(self):
         """Get column names
@@ -52,5 +53,17 @@ class authlogger(sqlite.SqliteLogger, yapc.component):
             output.dbg("Unauthentication of "+str(h)+" recorded",
                        self.__class__.__name__)
             self.table.add_row(tuple(i))
-                 
+        elif (isinstance(event, owevent.going_to_auth)):
+            h = None
+            if (event.host != None):
+                h = pu.array2hex_str(event.host)
+            i = [time.time(),
+                 "tryauth",
+                 event.datapathid,
+                 h,
+                 event.url]
+            output.dbg("Attempt authentication of "+str(h)+" recorded",
+                       self.__class__.__name__)
+            self.table.add_row(tuple(i))
+                             
         return True
