@@ -13,9 +13,13 @@ import openwifi.globals as owglobal
 AUTH_DST_IP = pu.ip_string2val("171.67.74.239")
 AUTH_DST_PORT1 = 80
 AUTH_DST_PORT2 = 8080
-AUTH_TIMEOUT = 120
 HTTPS_PORT = 443
-BYPASS_IP = [pu.ip_string2val("140.211.166.152")]
+
+AUTH_TIMEOUT = 120
+MAX_AUTH_TIMEOUT = 3600 #One hour
+
+#BYPASS_IP = [pu.ip_string2val("140.211.166.152")]
+BYPASS_IP = []
 
 def host_auth_server(host):
     """Return server host is going to authenticate with
@@ -71,11 +75,11 @@ class host_auth(yapc.component):
         if (isinstance(event, owevent.authenticated)):
             output.dbg(pu.array2hex_str(event.host)+" is authenticated",
                        self.__class__.__name__)
-            mcutil.set(host_auth.get_key(event.host), event.openid)
+            mcutil.set(host_auth.get_key(event.host), event.openid, MAX_AUTH_TIMEOUT)
         elif (isinstance(event, owevent.unauthenticated)):
             output.dbg(pu.array2hex_str(event.host)+" is unauthenticated",
                        self.__class__.__name__)
-            mcutil.set(host_auth.get_key(event.host), None)
+            mcutil.delete(host_auth.get_key(event.host))
             mcutil.delete(host_auth.get_auth_key(event.host))
         elif (isinstance(event, owevent.going_to_auth)):
             output.dbg(pu.array2hex_str(event.host)+" is going to authenticate",
