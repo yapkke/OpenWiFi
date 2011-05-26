@@ -8,10 +8,10 @@ import openwifi.event as owevent
 import yapc.log.output as output
 
 urls = (
-    r'/openid', 'openwifi.homewebpage.host',
+    r'/openid', 'openwifi.googlewebpage.host',
     r'/about', 'openwifi.webpage.about',
     r'/tos', 'openwifi.webpage.tos',
-    r'/', 'openwifi.homewebpage.index'
+    r'/', 'openwifi.googlewebpage.index'
     )
 
 
@@ -51,7 +51,7 @@ def form(openid_loc):
     if oid:
         return '''
         <form method="post" action="%s">
-          <img src="http://openflow2.stanford.edu:8080/static/login-bg.gif" alt="OpenID" />
+          <img src="http://openflowa.stanford.edu:8080/static/login-bg.gif" alt="OpenID" />
           <strong>%s</strong>
           <input type="hidden" name="action" value="logout" />
           <input type="hidden" name="return_to" value="%s" />
@@ -59,10 +59,10 @@ def form(openid_loc):
         </form>''' % (openid_loc, oid, web.ctx.fullpath)
     else:
         return '''
-        Login using your <img height=20 src=http://openflow2.stanford.edu:8080/static/google.png />  account:
+        Login using your <img height=20 src=http://openflowa.stanford.edu:8080/static/google.png />  account:
         <form method="post" action="%s">
         <input type="text" size=30 name="openid" 
-         style="background: url(http://openflow2.stanford.edu:8080/static/login-bg.gif) no-repeat; 
+         style="background: url(http://openflowa.stanford.edu:8080/static/login-bg.gif) no-repeat; 
          padding-left: 18px; background-position: 0 50%%;" />
         <input type="hidden" name="return_to" value="%s" />
         <button type="submit">log in</button>

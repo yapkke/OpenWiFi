@@ -14,7 +14,7 @@ import yapc.log.sqlite as sqlite
 import yapc.log.openflow as oflog
 
 import openwifi.webpage as owweb
-import openwifi.homewebpage as howweb
+import openwifi.googlewebpage as howweb
 import openwifi.globals as owglobal
 import openwifi.authenticate as owauth
 import openwifi.logger as owlog

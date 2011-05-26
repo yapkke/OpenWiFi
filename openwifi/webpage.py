@@ -68,7 +68,7 @@ def form(openid_loc):
     if oid:
         return '''
         <form method="post" action="%s">
-          <img src="http://openflow2.stanford.edu:8080/static/login-bg.gif" alt="OpenID" />
+          <img src="http://openflowa.stanford.edu:8080/static/login-bg.gif" alt="OpenID" />
           <strong>%s</strong>
           <input type="hidden" name="action" value="logout" />
           <input type="hidden" name="return_to" value="%s" />
@@ -79,7 +79,7 @@ def form(openid_loc):
         <form method="post" action="%s">
         <input type="text" size=80 name="openid" 
          value="http://www.google.com/profiles/" 
-         style="background: url(http://openflow2.stanford.edu:8080/static/login-bg.gif) no-repeat; 
+         style="background: url(http://openflowa.stanford.edu:8080/static/login-bg.gif) no-repeat; 
          padding-left: 18px; background-position: 0 50%%;" />
         <input type="hidden" name="return_to" value="%s" />
         <button type="submit">log in</button>
@@ -151,7 +151,7 @@ class index:
         </td></tr>
         <tr><td>
         Empowered by 
-        <img height=24px src="http://openflow2.stanford.edu:8080/static/newlogo5.png">
+        <img height=24px src="http://openflowa.stanford.edu:8080/static/newlogo5.png">
         </td></tr>
         </table>   
         </body>
