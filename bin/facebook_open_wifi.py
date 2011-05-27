@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import web
+import webfb.facebook as fb
+
 import yapc.core as yapc
 import yapc.log.output as output
 import yapc.comm.openflow as ofcomm
@@ -41,6 +43,8 @@ db = sqlite.SqliteDB(server, "openwifi.sqlite")
 fl = oflog.flowlogger(server, db)
 al = owlog.authlogger(server, db)
 db.start()
+
+fb.init(105259509564192)
 
 webapp = web.application(fbweb.urls, globals())
 session = web.session.Session(webapp, 

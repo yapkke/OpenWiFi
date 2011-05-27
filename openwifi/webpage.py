@@ -120,6 +120,7 @@ class index:
         body = '''
         <html><head><title>Open WiFi: Towards Access Everywhere...</title></head>
         <body>
+        <center>
         <h2>Welcome to OpenWiFi<sup>&alpha</sup>!</h2>
         <h4>A Stanford Research Project</h4>
         '''
@@ -149,7 +150,8 @@ class index:
         <a href="about">About OpenWiFi</a>&nbsp&nbsp
         <a href="tos">Terms of Service</a>.
         </td></tr>
-        </table>   
+        </table>
+        </center>   
         </body>
         </html>
         '''
