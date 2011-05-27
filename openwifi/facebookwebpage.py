@@ -28,7 +28,7 @@ class welcome:
         <html><head><title>Open WiFi: Towards Access Everywhere...</title></head>
         <body>
         <center>
-        <h2>Welcome to OpenWiFi<sup>&alpha</sup>!</h2>
+        <h2>Welcome to OpenWiFi<sup>&#945</sup>!</h2>
         <h4>A Stanford Research Project</h4>
         <table align=centerwidth=600 border=0>        
         <td><tr>Hi %s, hope you will enjoy OpenWiFi!
