@@ -149,10 +149,6 @@ class index:
         <a href="about">About OpenWiFi</a>&nbsp&nbsp
         <a href="tos">Terms of Service</a>.
         </td></tr>
-        <tr><td>
-        Empowered by 
-        <img height=24px src="http://openflowa.stanford.edu:8080/static/newlogo5.png">
-        </td></tr>
         </table>   
         </body>
         </html>

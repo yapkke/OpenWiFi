@@ -18,8 +18,8 @@ HTTPS_PORT = 443
 AUTH_TIMEOUT = 120
 MAX_AUTH_TIMEOUT = 3600 #One hour
 
-#BYPASS_IP = [pu.ip_string2val("140.211.166.152")]
 BYPASS_IP = []
+#BYPASS_IP.append(pu.ip_string2val("140.211.166.152")) #OpenID
 
 def host_auth_server(host):
     """Return server host is going to authenticate with
