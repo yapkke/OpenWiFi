@@ -38,7 +38,7 @@ class authlogger(sqlite.SqliteLogger, yapc.component):
                  h,
                  event.openid]
             output.dbg("Authentication of "+str(h)+" recorded"+\
-                           " with OpenID "+event.openid,
+                           " with ID "+event.openid,
                        self.__class__.__name__)
             self.table.add_row(tuple(i))
         elif (isinstance(event, owevent.unauthenticated)):
