@@ -5,6 +5,7 @@ import webfb.facebook as fb
 import yapc.core as yapc
 import yapc.log.output as output
 import yapc.comm.openflow as ofcomm
+import yapc.comm.json as jsoncomm
 import yapc.events.openflow as ofevents
 import yapc.netstate.swhost as switchhost
 import yapc.netstate.switches as swstate
@@ -31,6 +32,7 @@ server = yapc.core()
 webcleanup = owweb.cleanup(server)
 owglobal.server = server
 ofconn = ofcomm.ofserver(server)
+jsonconn = jsoncomm.jsonserver(server)
 ofparse = ofevents.parser(server)
 swconfig = swstate.dp_config(server, ofconn.connections)
 swconfig.default_miss_send_len = 65535
@@ -40,7 +42,7 @@ owfilter = owauth.filter(server, ofconn.connections)
 fsw = fswitch.learningswitch(server, ofconn.connections, True)
 fp = default.floodpkt(server, ofconn.connections)
 #pfr = ofdbg.show_flow_removed(server)
-db = sqlite.SqliteDB(server, "openwifi.sqlite")
+db = sqlite.SqliteDB(server, "openwifi.sqlite", jsonconn.connections)
 fl = oflog.flowlogger(server, db)
 al = owlog.authlogger(server, db)
 db.start()
