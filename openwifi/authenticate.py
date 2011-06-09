@@ -89,6 +89,38 @@ class host_auth(yapc.component):
 
         return True
 
+class filter(yapc.component):
+    """Class to filter traffic
+    
+    @author ykk
+    @date Jun 2011
+    """
+    def __init__(self, server, conn):
+        """Initialize
+        """
+        server.register_event_handler(ofevents.pktin.name, self)
+        self.conn = conn
+
+    def processevent(self, event):
+        """Process event
+
+        @return True for accepted traffic, else False
+        """
+        if (isinstance(event, ofevents.pktin)):
+            if (event.match.dl_type == dpkt.ETH_TYPE_ARP):
+                return True
+
+            if (event.match.nw_proto == dpkt.ip.IP_PROTO_ICMP):
+                return True
+            
+            for p in [22, 53, 67, 68, 80, 443, 8080]:
+                if ((event.match.tp_src == p) or (event.match.tp_dst == p)):
+                    return True
+
+            return False
+        return True
+
+
 class redirect(yapc.component):
     """Class to redirect unauthenticate host for authentication
     

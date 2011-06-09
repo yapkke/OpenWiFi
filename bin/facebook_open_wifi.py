@@ -36,6 +36,7 @@ swconfig = swstate.dp_config(server, ofconn.connections)
 swconfig.default_miss_send_len = 65535
 swhost = switchhost.mac2sw_binding(server)
 owredirect = owauth.redirect(server, ofconn.connections)
+owfilter = owauth.filter(server, ofconn.connections)
 fsw = fswitch.learningswitch(server, ofconn.connections, True)
 fp = default.floodpkt(server, ofconn.connections)
 #pfr = ofdbg.show_flow_removed(server)
