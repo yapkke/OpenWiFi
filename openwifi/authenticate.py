@@ -107,7 +107,7 @@ class filter(yapc.component):
         @return True for accepted traffic, else False
         """
         if (isinstance(event, ofevents.pktin)):
-            if (event.match.dl_type == dpkt.ETH_TYPE_ARP):
+            if (event.match.dl_type == dpkt.ethernet.ETH_TYPE_ARP):
                 return True
 
             if (event.match.nw_proto == dpkt.ip.IP_PROTO_ICMP):
@@ -117,6 +117,8 @@ class filter(yapc.component):
                 if ((event.match.tp_src == p) or (event.match.tp_dst == p)):
                     return True
 
+            output.dbg("Reject flow"+event.match.show(),
+                       self.__class__.__name__)
             return False
         return True
 
