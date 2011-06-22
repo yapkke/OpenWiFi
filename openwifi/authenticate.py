@@ -113,7 +113,8 @@ class filter(yapc.component):
             if (event.match.nw_proto == dpkt.ip.IP_PROTO_ICMP):
                 return True
             
-            for p in [22, 53, 67, 68, 80, 443, 8080]:
+            for p in [22, 25, 53, 67, 68, 80, 110, 143, \
+                          443, 465, 585, 993, 995, 8080]:
                 if ((event.match.tp_src == p) or (event.match.tp_dst == p)):
                     return True
 
